@@ -32,6 +32,12 @@ export function initViewer(container) {
             viewer.impl.glrenderer().setClearColor(0xffffff, 0);
             viewer.impl.invalidate(true);
             viewer.setEnvMapBackground(false);
+            viewer.addEventListener(Autodesk.Viewing.GEOMETRY_LOADED_EVENT, function () {
+                viewer.setEnvMapBackground(false);
+                viewer.impl.renderer().setClearAlpha(0);
+                viewer.impl.glrenderer().setClearColor(0xffffff, 0);
+                viewer.impl.invalidate(true);
+            });
             viewer.addEventListener(Autodesk.Viewing.TOOLBAR_CREATED_EVENT, function () {
                 viewer.toolbar.setVisible(false);
             });
@@ -52,6 +58,7 @@ export function loadModel(viewer, urn) {
             reject({ code, message, errors });
         }
         viewer.setLightPreset(0);
+        viewer.setEnvMapBackground(false);
         viewer.impl.renderer().setClearAlpha(0);
         viewer.impl.glrenderer().setClearColor(0xffffff, 0);
         viewer.impl.invalidate(true);
