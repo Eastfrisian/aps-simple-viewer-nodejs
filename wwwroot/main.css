@@ -3,6 +3,13 @@ body, html {
     padding: 0;
     height: 100vh;
     font-family: ArtifaktElement;
+    background: transparent;
+}
+
+#preview > div,
+#preview .lmv-main-div,
+#preview .adsk-viewing-canvas {
+    background: transparent !important;
 }
 
 #header, #preview, #overlay {

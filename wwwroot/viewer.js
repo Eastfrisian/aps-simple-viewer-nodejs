@@ -16,10 +16,22 @@ async function getAccessToken(callback) {
 
 function applyTransparency(viewer) {
     viewer.setEnvMapBackground(false);
-    viewer.impl.glrenderer().setClearColor(0x000000, 0);
-    if (viewer.impl.renderer().renderBackground) {
-        viewer.impl.renderer().renderBackground = function () {};
+
+    // THREE.js WebGL renderer: clear to fully transparent
+    const glRenderer = viewer.impl.glrenderer();
+    glRenderer.setClearColor(0x000000, 0);
+    glRenderer.clear();
+
+    // THREE.js scene background (r125+)
+    if (viewer.impl.scene) viewer.impl.scene.background = null;
+
+    // Autodesk renderer wrapper: disable background rendering
+    const ctx = viewer.impl.renderer();
+    if (ctx) {
+        if (typeof ctx.renderBackground === 'function') ctx.renderBackground = () => {};
+        if (typeof ctx.drawBackground === 'function') ctx.drawBackground = () => {};
     }
+
     viewer.impl.invalidate(true);
 }
 
@@ -36,7 +48,7 @@ export function initViewer(container) {
             const viewer = new Autodesk.Viewing.GuiViewer3D(container, config);
             viewer.start();
             viewer.setTheme('light-theme');
-            viewer.container.style.backgroundColor = 'transparent';
+            viewer.container.style.background = 'transparent';
             applyTransparency(viewer);
             viewer.addEventListener(Autodesk.Viewing.GEOMETRY_LOADED_EVENT, function () {
                 applyTransparency(viewer);
