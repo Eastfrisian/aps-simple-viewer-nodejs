@@ -23,10 +23,10 @@ export function initViewer(container) {
             const viewer = new Autodesk.Viewing.GuiViewer3D(container, config);
             viewer.start();
             viewer.setTheme('light-theme');
+            Autodesk.Viewing.Private.InitParametersSetting.alpha=true;
             viewer.impl.renderer().setClearAlpha(0);
             viewer.impl.glrenderer().setClearColor(0xffffff, 0);
             viewer.impl.invalidate(true);
-            viewer.impl.background(none);
             viewer.addEventListener(Autodesk.Viewing.TOOLBAR_CREATED_EVENT, function () {
                 viewer.toolbar.setVisible(false);
             });
@@ -37,8 +37,8 @@ export function initViewer(container) {
             // if (navControlGroup) {
             //     navControlGroup.setVisible(false); // Korrekte Methode zum Ausblenden
             // }
-            // const logo = container.querySelector('.adsk-viewing-logo');
-            // if (logo) logo.style.display = 'none';
+            const logo = container.querySelector('.adsk-viewing-logo');
+            if (logo) logo.style.display = 'none';
             resolve(viewer);
         });
     });
