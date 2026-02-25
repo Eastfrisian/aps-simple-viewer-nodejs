@@ -14,24 +14,27 @@ async function getAccessToken(callback) {
     }
 }
 
+function patchTransparency(viewer) {
+    const ctx = viewer.impl.renderer();
+    if (ctx._transparencyPatched) return;
+    ctx._transparencyPatched = true;
+
+    // Hook into beginScene (called every frame) to enforce alpha=0 before background is drawn
+    const origBeginScene = ctx.beginScene.bind(ctx);
+    ctx.beginScene = function (...args) {
+        this.setClearAlpha(0);
+        return origBeginScene(...args);
+    };
+}
+
 function applyTransparency(viewer) {
     viewer.setEnvMapBackground(false);
 
-    // THREE.js WebGL renderer: clear to fully transparent
-    const glRenderer = viewer.impl.glrenderer();
-    glRenderer.setClearColor(0x000000, 0);
-    glRenderer.clear();
-
-    // THREE.js scene background (r125+)
-    if (viewer.impl.scene) viewer.impl.scene.background = null;
-
-    // Autodesk renderer wrapper: disable background rendering
     const ctx = viewer.impl.renderer();
-    if (ctx) {
-        if (typeof ctx.renderBackground === 'function') ctx.renderBackground = () => {};
-        if (typeof ctx.drawBackground === 'function') ctx.drawBackground = () => {};
-    }
+    ctx.setClearAlpha(0);
+    ctx.setBackgroundTexture(null);
 
+    viewer.impl.glrenderer().setClearColor(0x000000, 0);
     viewer.impl.invalidate(true);
 }
 
@@ -49,6 +52,7 @@ export function initViewer(container) {
             viewer.start();
             viewer.setTheme('light-theme');
             viewer.container.style.background = 'transparent';
+            patchTransparency(viewer);
             applyTransparency(viewer);
             viewer.addEventListener(Autodesk.Viewing.GEOMETRY_LOADED_EVENT, function () {
                 applyTransparency(viewer);
