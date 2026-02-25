@@ -31,16 +31,11 @@ export function initViewer(container) {
             viewer.impl.renderer().setClearAlpha(0);
             viewer.impl.glrenderer().setClearColor(0xffffff, 0);
             viewer.impl.invalidate(true);
+            viewer.setEnvMapBackground(false);
             viewer.addEventListener(Autodesk.Viewing.TOOLBAR_CREATED_EVENT, function () {
                 viewer.toolbar.setVisible(false);
             });
-            // Zugriff auf die Toolbar-Hauptinstanz
-            // const toolbar = viewer.getToolbar();
-            // const navControlGroup = toolbar.getControl(Autodesk.Viewing.TOOLBAR.NAVTOOLSID);
-
-            // if (navControlGroup) {
-            //     navControlGroup.setVisible(false); // Korrekte Methode zum Ausblenden
-            // }
+       
             const logo = container.querySelector('.adsk-viewing-logo');
             if (logo) logo.style.display = 'none';
             resolve(viewer);
@@ -57,6 +52,9 @@ export function loadModel(viewer, urn) {
             reject({ code, message, errors });
         }
         viewer.setLightPreset(0);
+        viewer.impl.renderer().setClearAlpha(0);
+        viewer.impl.glrenderer().setClearColor(0xffffff, 0);
+        viewer.impl.invalidate(true);
         Autodesk.Viewing.Document.load('urn:' + urn, onDocumentLoadSuccess, onDocumentLoadFailure);
     });
 }
