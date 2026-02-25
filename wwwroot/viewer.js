@@ -14,6 +14,15 @@ async function getAccessToken(callback) {
     }
 }
 
+function applyTransparency(viewer) {
+    viewer.setEnvMapBackground(false);
+    viewer.impl.glrenderer().setClearColor(0x000000, 0);
+    if (viewer.impl.renderer().renderBackground) {
+        viewer.impl.renderer().renderBackground = function () {};
+    }
+    viewer.impl.invalidate(true);
+}
+
 export function initViewer(container) {
     return new Promise(function (resolve, reject) {
         Autodesk.Viewing.Initializer({ env: 'AutodeskProduction', getAccessToken }, function () {
@@ -28,20 +37,14 @@ export function initViewer(container) {
             viewer.start();
             viewer.setTheme('light-theme');
             viewer.container.style.backgroundColor = 'transparent';
-            viewer.impl.renderer().setClearAlpha(0);
-            viewer.impl.glrenderer().setClearColor(0xffffff, 0);
-            viewer.impl.invalidate(true);
-            viewer.setEnvMapBackground(false);
+            applyTransparency(viewer);
             viewer.addEventListener(Autodesk.Viewing.GEOMETRY_LOADED_EVENT, function () {
-                viewer.setEnvMapBackground(false);
-                viewer.impl.renderer().setClearAlpha(0);
-                viewer.impl.glrenderer().setClearColor(0xffffff, 0);
-                viewer.impl.invalidate(true);
+                applyTransparency(viewer);
             });
             viewer.addEventListener(Autodesk.Viewing.TOOLBAR_CREATED_EVENT, function () {
                 viewer.toolbar.setVisible(false);
             });
-       
+
             const logo = container.querySelector('.adsk-viewing-logo');
             if (logo) logo.style.display = 'none';
             resolve(viewer);
@@ -58,10 +61,7 @@ export function loadModel(viewer, urn) {
             reject({ code, message, errors });
         }
         viewer.setLightPreset(0);
-        viewer.setEnvMapBackground(false);
-        viewer.impl.renderer().setClearAlpha(0);
-        viewer.impl.glrenderer().setClearColor(0xffffff, 0);
-        viewer.impl.invalidate(true);
+        applyTransparency(viewer);
         Autodesk.Viewing.Document.load('urn:' + urn, onDocumentLoadSuccess, onDocumentLoadFailure);
     });
 }
