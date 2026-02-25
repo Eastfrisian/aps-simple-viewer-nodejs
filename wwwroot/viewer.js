@@ -18,12 +18,16 @@ export function initViewer(container) {
     return new Promise(function (resolve, reject) {
         Autodesk.Viewing.Initializer({ env: 'AutodeskProduction', getAccessToken }, function () {
             const config = {
-                extensions: ['Autodesk.DocumentBrowser']
+                extensions: ['Autodesk.DocumentBrowser'],
+                canvasConfig: {
+                    alpha: true,
+                    premultipliedAlpha: false
+                }
             };
             const viewer = new Autodesk.Viewing.GuiViewer3D(container, config);
             viewer.start();
             viewer.setTheme('light-theme');
-            Autodesk.Viewing.Private.InitParametersSetting.alpha=true;
+            viewer.container.style.backgroundColor = 'transparent';
             viewer.impl.renderer().setClearAlpha(0);
             viewer.impl.glrenderer().setClearColor(0xffffff, 0);
             viewer.impl.invalidate(true);
