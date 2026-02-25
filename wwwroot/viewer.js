@@ -23,7 +23,13 @@ export function initViewer(container) {
             const viewer = new Autodesk.Viewing.GuiViewer3D(container, config);
             viewer.start();
             viewer.setTheme('light-theme');
-            Autodesk.Viewing.UI.ControlGroup.isVisible(false);
+            // Zugriff auf die Toolbar-Hauptinstanz
+            const toolbar = viewer.getToolbar();
+            const navControlGroup = toolbar.getControl(Autodesk.Viewing.TOOLBAR.NAVTOOLSID);
+
+            if (navControlGroup) {
+                navControlGroup.setVisible(false); // Korrekte Methode zum Ausblenden
+            }
             const logo = container.querySelector('.adsk-viewing-logo');
             if (logo) logo.style.display = 'none';
             resolve(viewer);
