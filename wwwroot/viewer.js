@@ -23,6 +23,9 @@ export function initViewer(container) {
             const viewer = new Autodesk.Viewing.GuiViewer3D(container, config);
             viewer.start();
             viewer.setTheme('light-theme');
+            viewer.impl.renderer().setClearAlpha(0);
+            viewer.impl.glrenderer().setClearColor(0xffffff, 0);
+            viewer.impl.invalidate(true);
             viewer.addEventListener(Autodesk.Viewing.TOOLBAR_CREATED_EVENT, function () {
                 viewer.toolbar.setVisible(false);
             });
