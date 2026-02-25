@@ -26,6 +26,7 @@ export function initViewer(container) {
             viewer.impl.renderer().setClearAlpha(0);
             viewer.impl.glrenderer().setClearColor(0xffffff, 0);
             viewer.impl.invalidate(true);
+            viewer.impl.background(none);
             viewer.addEventListener(Autodesk.Viewing.TOOLBAR_CREATED_EVENT, function () {
                 viewer.toolbar.setVisible(false);
             });
