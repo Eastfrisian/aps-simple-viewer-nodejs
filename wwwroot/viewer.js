@@ -23,6 +23,7 @@ export function initViewer(container) {
             const viewer = new Autodesk.Viewing.GuiViewer3D(container, config);
             viewer.start();
             viewer.setTheme('light-theme');
+            Autodesk.Viewing.UI.ControlGroub.isVisible(false);
             const logo = container.querySelector('.adsk-viewing-logo');
             if (logo) logo.style.display = 'none';
             resolve(viewer);
